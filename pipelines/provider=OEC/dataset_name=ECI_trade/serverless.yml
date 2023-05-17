@@ -1,0 +1,40 @@
+useDotenv: true
+service: lambda-data-to-s3
+provider:
+  name: aws
+  runtime: python3.8
+  stage: prod
+  region: eu-west-1
+  environment:
+    OEC_ECI_trade_ENDPOINT: ${env:OEC_ECI_trade_ENDPOINT}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+          Resource: arn:aws:s3:::sumeo-oec/*
+
+functions:
+  lambda_data_to_s3:
+    handler: lambda_handler.lambda_handler
+    events:
+      - schedule: cron(0 21 * * ? *)
+
+resources:
+  Resources:
+    SumeoOECBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: sumeo-oec-data
+        AccessControl: Private
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - "*"
+              AllowedMethods:
+                - GET
+                - PUT
+              AllowedHeaders:
+                - "*"
