@@ -1,9 +1,9 @@
-useDotenv: true
 service: lambda-data-to-s3
+useDotenv: true
 provider:
   name: aws
   runtime: python3.8
-  stage: prod
+  stage: dev
   region: eu-west-1
   environment:
     OEC_ECI_trade_ENDPOINT: ${env:OEC_ECI_trade_ENDPOINT}
@@ -14,7 +14,7 @@ provider:
           Action:
             - s3:PutObject
             - s3:GetObject
-          Resource: arn:aws:s3:::sumeo-oec/*
+          Resource: arn:aws:s3:::sumeo-provider-oec-data/*
 
 functions:
   lambda_data_to_s3:
@@ -24,17 +24,15 @@ functions:
 
 resources:
   Resources:
-    SumeoOECBucket:
+    S3Bucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: sumeo-oec-data
+        BucketName: sumeo-provider-oec-data
         AccessControl: Private
-        CorsConfiguration:
-          CorsRules:
-            - AllowedOrigins:
-                - "*"
-              AllowedMethods:
-                - GET
-                - PUT
-              AllowedHeaders:
-                - "*"
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true

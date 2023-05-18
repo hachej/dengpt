@@ -1,6 +1,5 @@
 import os
 import hashlib
-import json
 import boto3
 import requests
 from datetime import datetime
@@ -16,7 +15,7 @@ def lambda_handler(event, context):
 
     s3 = boto3.client('s3')
     s3.put_object(
-        Bucket='sumeo-OEC',
+        Bucket='sumeo-provider-oec-data',
         Key=file_path,
         Body=data,
         Metadata={

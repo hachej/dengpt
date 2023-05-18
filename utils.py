@@ -32,15 +32,16 @@ def clean_dir(directory):
     import shutil
 
     extensions_to_skip = ['.env','.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.ico', '.tif', '.tiff']  # Add more extensions if needed
-
+    folders_to_skip = [".serverless", "node_modules", ".git", ".idea", ".vscode", ".venv", "venv", "env", "envs", "virtualenv", "virtualenvs"]
     # Check if the directory exists
     if os.path.exists(directory):
         # If it does, iterate over all files and directories
         for root, dirs, files in os.walk(directory):
-            for file in files:
-                _, extension = os.path.splitext(file)
-                if extension not in extensions_to_skip:
-                    os.remove(os.path.join(root, file))
+            if not root.split("/")[-1] in folders_to_skip:
+                for file in files:
+                    _, extension = os.path.splitext(file)
+                    if extension not in extensions_to_skip and file not in extensions_to_skip:
+                        os.remove(os.path.join(root, file))
     else:
         os.makedirs(directory, exist_ok=True)
 

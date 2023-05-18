@@ -57,13 +57,13 @@ if __name__ == "__main__":
     lambda_name = "lambda_data_to_s3"
     directory = f"{base_directory}/provider={provider}/dataset_name={dataset_name}"
     frequency = "every day at 21:00"
-
+    bucket_name = f'sumeo-provider-{provider}-data'.lower()
     prompt = f"""
     1- Lambda Function:
         Develop a Python file named 'lambda_handler'. This function should act as a Lambda function handler and accept two arguments: event and context.
         Invoke the endpoint url saved in env variable {provider}_{dataset_name}_ENDPOINT and store the response payload in a bucket named 'sumeo-{provider}' within the directory data_profile=raw/dataset_name={dataset_name}/.
         Generate the file name by creating an MD5 hash of the data.
-        Save the file in the bucket, using the path data_profile=raw/provider_name={provider}/dataset_name={dataset_name}/request_time=request_day/, where request_day is the day of the request in UTC.
+        Save the file in the bucket {bucket_name}, using the path data_profile=raw/provider_name={provider}/dataset_name={dataset_name}/request_time=request_day/, where request_day is the day of the request in UTC.
         Append metadata to the file with the following information:
             Request time in UTC
             Provider: {provider}
@@ -75,13 +75,17 @@ if __name__ == "__main__":
     2- Deployment on AWS using the Serverless Framework:
         Generate a serverless.yml file in the base directory. This file should define:
             A Lambda function named {lambda_name} triggered at a certain {frequency}.
-            An S3 bucket named 'sumeo-{provider}' in lowercase with read and write access for the Lambda function.
+            An S3 bucket named {bucket_name} lowercase with read and write access for the Lambda function.
             Set useDotenv: true at the top of the file
-            A shell script file to install the required Serverless plugins.
+            A shell script file to install the required Serverless plugins globally
             The AWS region set to 'eu-west-1'.
-             
+            use plugin serverless-python-requirements:
+                custom:
+                pythonRequirements:
+                    dockerizePip: true
+
     3- .env File:
-        Construct a .env file in the base directory, housing the necessary environment variables for the serverless.yml file.   
+        Construct a .env.template file in the base directory, housing the necessary environment variables for the serverless.yml file.   
     """
 
     # print the prompt in green color
