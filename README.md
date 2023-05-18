@@ -2,21 +2,14 @@ This project aims at creating a fully autonomous data engineer. Much of a data e
 
 The long-term goal is to have a collection of integration patterns and agent available that can be combined to automatically generate, manage, and maintain data pipelines.
 
-As an initial step, the first integration pattern is generated as follows:
-
-    - Data are queried from an external API via an AWS Lambda function.
-    - Data are saved in S3.
-    - Data are ingested into Snowflake in a landing schema.
-
-
 Get started:
 1- clone this repo
-2- set .env file
-``
+2- set .env file and set your GPT-4 API key
+`` 
 cp .env.template .env
 ``
 
-3- install requirementd.txt
+3- install requirements.txt
 ``
 pip install -r requirements.txt
 ``
